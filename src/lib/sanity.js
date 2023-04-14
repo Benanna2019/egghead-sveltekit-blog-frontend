@@ -2,42 +2,41 @@ import { SanityClient, createClient } from "@sanity/client";
 import { env } from "$env/dynamic/private";
 import { allPostsSchema, postSchema } from "./types.d";
 
-export function sanityConfig() {
+/**
+ * @return {SanityClient}
+ */
+
+function sanityClient() {
+  /**
+   * @type {import('./types').SanityConfig}
+   */
   const config = {
     projectId: env.SANITY_PROJECT_ID,
     dataset: env.SANITY_PROJECT_DATASET,
-    apiVersion: "2021-03-25",
+    apiVersion: "2021-10-21",
   };
   return createClient({ ...config });
 }
 
-/**
- * @param {SanityClient} client
- */
-
-export const getAllPosts = (client) => async () => {
-  const allPostsQuery = `*[ _type == 'post']{ title, "slug": slug.current }`;
+export const getAllPosts = async () => {
+  const client = sanityClient();
+  const allPostsQuery = "*[ _type == 'post']{ title, 'slug': slug.current }";
+  /**
+   * @type {import('./types').AllPosts}
+   */
   const allPosts = await client.fetch(allPostsQuery);
   return allPostsSchema.parse(allPosts);
 };
 
-/**
- * @param {SanityClient} client
- */
-
-export const getPostBySlug =
-  (client) =>
-  async (
-    /** @type {string} */
-    slug
-  ) => {
-    const individualPostQuery = `*[ _type == 'post' && slug.current == '${slug}']{title, "slug": slug.current, publishedAt, author->{ name }, "content": body, categories[]->{ title }}`;
-
-    const post = await client.fetch(individualPostQuery);
-    return postSchema.parse(post[0]);
-  };
-
-export default (client = sanityConfig()) => ({
-  getAllPosts: getAllPosts(client),
-  getPostBySlug: getPostBySlug(client),
-});
+export const getPostBySlug = async (
+  /** @type {string} */
+  slug
+) => {
+  const client = sanityClient();
+  const postQuery = `*[ _type == 'post' && slug.current == '${slug}']{title, "slug": slug.current, author->{ name }, "date": publishedAt, "content": body, categories[]->{ title } }`;
+  /**
+   * @type {import('./types').Post[]}
+   */
+  const post = await client.fetch(postQuery);
+  return postSchema.parse(post[0]);
+};

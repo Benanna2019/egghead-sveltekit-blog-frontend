@@ -1,10 +1,9 @@
-import Sanity from "../../lib/sanity";
+import { getAllPosts } from "../../lib/sanity";
 
-const sanity = Sanity();
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
-  const allPosts = await sanity.getAllPosts();
+  const posts = await getAllPosts();
   return {
-    allPosts,
+    posts,
   };
 }

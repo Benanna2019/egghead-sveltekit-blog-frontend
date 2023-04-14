@@ -22,7 +22,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@sanity/client": "^5.4.0",
+    "@sanity/client": "^5.4.2",
     "mdsvex": "^0.10.6",
     "ramda": "^0.28.0",
     "zod": "^3.21.4"

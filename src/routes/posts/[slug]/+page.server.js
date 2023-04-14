@@ -1,15 +1,11 @@
-import Sanity from "../../../lib/sanity";
+import { getPostBySlug } from "../../../lib/sanity";
 import { compile } from "mdsvex";
-
-const sanity = Sanity();
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
   const routeSlug = params.slug;
-  const getSinglePost = await sanity.getPostBySlug(routeSlug);
-
-  const { content, title, slug, ...rest } = getSinglePost;
-
+  const getSinglePost = await getPostBySlug(routeSlug);
+  const { title, slug, content, ...rest } = getSinglePost;
   const post = { title, slug, content: compile(content), ...rest };
 
   return {

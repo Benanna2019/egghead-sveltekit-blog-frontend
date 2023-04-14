@@ -7,10 +7,12 @@ export const allPostsSchema = z.array(
   })
 );
 
+export type AllPosts = z.infer<typeof allPostsSchema>;
+
 export const postSchema = z.object({
   title: z.string(),
   slug: z.string(),
-  publishedAt: z.string(),
+  date: z.string(),
   author: z.object({
     name: z.string(),
   }),
@@ -23,3 +25,9 @@ export const postSchema = z.object({
 });
 
 export type Post = z.infer<typeof postSchema>;
+
+export type SanityConfig = {
+  projectId: string;
+  dataset: string;
+  apiVersion: string;
+};
